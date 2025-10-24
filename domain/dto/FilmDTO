@@ -1,0 +1,76 @@
+package domain;
+
+import domain.Film;
+import domain.StatoVisione;
+
+public class FilmDTO {
+
+    private String id;
+    private String titolo;
+    private String regista;
+    private Integer anno;
+    private String genere;
+    private Double rating;
+    private StatoVisione stato;
+
+    public FilmDTO() {}
+
+    public FilmDTO(String id, String titolo, String regista, Integer anno, String genere, Double rating, StatoVisione stato) {
+        this.id = id;
+        this.titolo = titolo;
+        this.regista = regista;
+        this.anno = anno;
+        this.genere = genere;
+        this.rating = rating;
+        this.stato = stato;
+    }
+
+    // Factory: entity -> DTO
+    public static FilmDTO from(Film f) {
+        return new FilmDTO(
+                f.getId(),
+                f.getTitolo(),
+                f.getRegista(),
+                f.getAnno(),
+                f.getGenere(),
+                f.getRating(),
+                f.getStato()
+        );
+    }
+
+    // DTO -> entity (crea un Film con gli stessi valori)
+    public Film toEntity() {
+        return new Film(
+                this.id,
+                this.titolo,
+                this.regista,
+                this.anno,
+                this.genere,
+                this.rating,
+                this.stato
+        );
+    }
+
+    // Getter/Setter
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+
+    public String getTitolo() { return titolo; }
+    public void setTitolo(String titolo) { this.titolo = titolo; }
+
+    public String getRegista() { return regista; }
+    public void setRegista(String regista) { this.regista = regista; }
+
+    public Integer getAnno() { return anno; }
+    public void setAnno(Integer anno) { this.anno = anno; }
+
+    public String getGenere() { return genere; }
+    public void setGenere(String genere) { this.genere = genere; }
+
+    public Double getRating() { return rating; }
+    public void setRating(Double rating) { this.rating = rating; }
+
+    public StatoVisione getStato() { return stato; }
+    public void setStato(StatoVisione stato) { this.stato = stato; }
+    
+}

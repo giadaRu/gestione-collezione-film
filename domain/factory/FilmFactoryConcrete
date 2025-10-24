@@ -1,0 +1,49 @@
+package domain.factory;
+
+import domain.dto.FilmDTO;
+import domain.model.Film;
+import domain.model.StatoVisione;
+
+
+public class FilmFactoryConcrete implements FilmFactory {
+
+    public FilmFactoryConcrete() {}
+
+    @Override
+    public Film fromDTO(FilmDTO dto) {
+        if (dto == null) {
+            throw new IllegalArgumentException("Il DTO fornito è nullo");
+        }
+
+        // Normalizzazione dei vari campi
+        String titolo = normalize(dto.getTitolo());
+        String regista = normalize(dto.getRegista());
+        String genere = normalize(dto.getGenere());
+
+        // Si assume che, se non specificato, lo stato è DA_VEDERE
+        StatoVisione stato = dto.getStato() != null ? dto.getStato() : StatoVisione.DA_VEDERE;
+
+        // Se la valutazione è nulla o fuori range, sarà azzerata
+        Double rating = dto.getRating();
+        if (rating == null || rating < 0 || rating > 5) {
+            rating = 0.0;
+        }
+
+        // Costruzione del Film
+        Film film = new Film();
+        film.setId(dto.getId());
+        film.setTitolo(titolo);
+        film.setRegista(regista);
+        film.setAnno(dto.getAnno());
+        film.setGenere(genere);
+        film.setRating(rating);
+        film.setStato(stato);
+
+        return film;
+    }
+
+    // Le stringhe vengono normalizzate per eliminare spazi superflui
+    private String normalize(String s) {
+        return (s == null) ? null : s.trim();
+    }
+}
