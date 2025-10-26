@@ -1,9 +1,7 @@
 package it.unical.videoteca.domain.factory;
 
 import org.junit.jupiter.api.Test;
-import it.unical.videoteca.domain.dto.FilmDTO;
-import it.unical.videoteca.domain.model.Film;
-import it.unical.videoteca.domain.model.StatoVisione;
+import it.unical.videoteca.domain.*;
 
 public class FilmFactoryTest {
 
