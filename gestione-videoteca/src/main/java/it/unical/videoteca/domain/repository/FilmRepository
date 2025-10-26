@@ -1,0 +1,23 @@
+package it.unical.videoteca.domain.repository;
+
+import java.util.*;
+import it.unical.videoteca.domain.model.Film;
+
+public interface FilmRepository {
+
+    //Aggiunge o aggiorna un film nel repository
+    void save(Film film);
+
+    //Rimuove un film dal repository tramite ID 
+    void delete(String id);
+
+    //Restituisce un film cercandolo per ID, se esiste
+    Optional<Film> findById(String id);
+
+    //Restituisce tutti i film presenti nel repository
+    List<Film> findAll();
+
+    
+    //Controlla se esiste già un film con gli stessi parametri (per garantire unicità)
+    boolean exists(String titolo, String regista, int anno);
+}

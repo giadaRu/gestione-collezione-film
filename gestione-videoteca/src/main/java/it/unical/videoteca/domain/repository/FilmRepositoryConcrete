@@ -1,0 +1,76 @@
+package it.unical.videoteca.domain.repository;
+
+import java.util.*;
+import it.unical.videoteca.domain.model.Film;
+
+
+public class FilmRepositoryConcrete implements FilmRepository {
+
+    private final List<Film> archivio = new ArrayList<>();
+
+@Override
+public void save(Film film) {
+    if (film == null)
+        throw new IllegalArgumentException("Il film da salvare non può essere null");
+
+    // Se esiste già un film con lo stesso id → aggiorna
+    Film filmDaAggiornare = null;
+    for (Film f : archivio) {
+        if (f.getId().equals(film.getId())) {
+            filmDaAggiornare = f;
+            break;
+        }
+    }
+    if (filmDaAggiornare != null) {
+        archivio.remove(filmDaAggiornare);
+    }
+
+    // Se esiste già un film con gli stessi parametri → errore
+    if (exists(film.getTitolo(), film.getRegista(), film.getAnno())) {
+        throw new IllegalStateException("Film duplicato: " + film.getTitolo() + " (" + film.getAnno() + ")");
+    }
+
+    archivio.add(film);
+}
+
+
+    @Override
+    public void delete(String id) {
+        archivio.removeIf(f -> f.getId().equals(id));
+    }
+
+    @Override
+    public Optional<Film> findById(String id) {
+        return archivio.stream()
+                .filter(f -> f.getId().equals(id))
+                .findFirst();
+    }
+
+    @Override
+    public List<Film> findAll() {
+        return new ArrayList<>(archivio); // restituisce una copia
+
+    }
+
+@Override
+public boolean exists(String titolo, String regista, int anno) {
+    if (titolo == null || regista == null)
+        return false;
+
+    String titoloNorm = titolo.trim().toLowerCase();
+    String registaNorm = regista.trim().toLowerCase();
+
+    for (Film f : archivio) {
+        String titoloFilm = f.getTitolo().trim().toLowerCase();
+        String registaFilm = f.getRegista().trim().toLowerCase();
+
+        if (titoloFilm.equals(titoloNorm) &&
+            registaFilm.equals(registaNorm) &&
+            f.getAnno() == anno) {
+            return true; 
+        }
+    }
+    return false; 
+}
+
+}
