@@ -1,0 +1,46 @@
+package it.unical.videoteca.domain.factory;
+
+import org.junit.jupiter.api.Test;
+import it.unical.videoteca.domain.dto.FilmDTO;
+import it.unical.videoteca.domain.model.Film;
+import it.unical.videoteca.domain.model.StatoVisione;
+
+public class FilmFactoryTest {
+
+    @Test
+    void testCreazioneValida() {
+        FilmFactory factory = new FilmFactoryConcrete();
+
+        FilmDTO dto = new FilmDTO(
+                "ID-1",
+                "  Inception  ",
+                "  Christopher Nolan ",
+                2010,
+                " Fantascienza ",
+                null,
+                null
+        );
+
+        Film f = factory.fromDTO(dto);
+
+
+        if (!f.getTitolo().equals("Inception"))
+            throw new RuntimeException("Errore nel titolo (trim non applicato)");
+
+        if (!f.getRegista().equals("Christopher Nolan"))
+            throw new RuntimeException("Errore nel regista (trim non applicato)");
+
+        if (f.getAnno() != 2010)
+            throw new RuntimeException("Anno non impostato correttamente");
+
+        if (f.getRating() != 0.0)
+            throw new RuntimeException("Rating di default non corretto");
+
+        if (f.getStato() != StatoVisione.DA_VEDERE)
+            throw new RuntimeException("Stato di default non corretto");
+
+        System.out.println("FilmFactoryTest completato correttamente");
+    }
+
+
+}
