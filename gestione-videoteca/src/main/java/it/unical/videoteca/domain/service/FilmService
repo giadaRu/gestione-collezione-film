@@ -1,0 +1,79 @@
+package it.unical.videoteca.domain.service;
+
+import java.util.List;
+import java.util.ArrayList;
+
+import it.unical.videoteca.domain.*;
+
+
+public class FilmService {
+
+    private final FilmRepository repository;
+    private final FilmFactory factory;
+
+    public FilmService() {
+        this.repository = new FilmRepositoryConcrete();
+        this.factory = new FilmFactoryConcrete();
+    }
+
+    public FilmService(FilmRepository repository, FilmFactory factory) {
+        this.repository = repository;
+        this.factory = factory;
+    }
+
+    // Aggiunge un nuovo film a partire dal DTO (se c'è già -> errore)
+    public void aggiungiFilm(FilmDTO dto) {
+        if (dto == null)
+            throw new IllegalArgumentException("Il DTO del film non può essere null");
+
+        Film film = factory.fromDTO(dto);
+
+        if (repository.exists(film.getTitolo(), film.getRegista(), film.getAnno()))
+            throw new IllegalStateException("Il film esiste già nel catalogo");
+
+        repository.save(film);
+    }
+
+    //Rimuove un film dato il suo ID
+    public void rimuoviFilm(String id) {
+        if (id == null || id.isBlank())
+            throw new IllegalArgumentException("ID non valido");
+        repository.delete(id);
+    }
+
+    //Modifica un film esistente (stesso ID)
+    public void modificaFilm(FilmDTO dto) {
+        if (dto == null)
+            throw new IllegalArgumentException("Il DTO non può essere null");
+
+        Film film = factory.fromDTO(dto);
+        repository.save(film);
+    }
+
+    //Restituisce la lista di utti i film presenti
+    public List<Film> trovaTutti() {
+        return repository.findAll();
+    }
+
+    //Trova un film per ID (se non esiste->null)
+    public Film trovaPerId(String id) {
+        List<Film> tutti = repository.findAll();
+        for (Film f : tutti) {
+            if (f.getId().equals(id))
+                return f;
+        }
+        return null;
+    }
+
+    //Restituisce tutti i film che appartengono al genere passato come parametro
+    public List<Film> trovaPerGenere(String genere) {
+        List<Film> risultato = new ArrayList<>();
+        for (Film f : repository.findAll()) {
+            if (f.getGenere() != null &&
+                f.getGenere().equalsIgnoreCase(genere)) {
+                risultato.add(f);
+            }
+        }
+        return risultato;
+    }
+}
