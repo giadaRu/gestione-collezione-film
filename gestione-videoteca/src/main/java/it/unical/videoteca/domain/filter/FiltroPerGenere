@@ -1,0 +1,16 @@
+package it.unical.videoteca.domain.filter;
+
+import it.unical.videoteca.domain.model.Film;
+
+public class FiltroPerGenere implements FiltroFilm {
+    private final String genere;
+
+    public FiltroPerGenere(String genere) {
+        this.genere = genere;
+    }
+
+    @Override
+    public boolean applica(Film film) {
+        return film.getGenere() != null && film.getGenere().equalsIgnoreCase(genere);
+    }
+}
