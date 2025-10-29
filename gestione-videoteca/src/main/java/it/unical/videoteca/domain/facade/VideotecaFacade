@@ -1,17 +1,19 @@
 package it.unical.videoteca.domain.facade;
 
-import java.util.List;
+import java.util.*;
 import it.unical.videoteca.domain.*;
 
 
 public class VideotecaFacade {
 
     private final FilmService service;
+    private final List<VideotecaMemento> cronologia; //per gestire gli stati precedenti
 
     public VideotecaFacade() {
         this.service = new FilmService();
     }
 
+    //Metodi base -----------------------------------
     public void aggiungiFilm(FilmDTO dto) {
         service.aggiungiFilm(dto);
     }
@@ -34,5 +36,34 @@ public class VideotecaFacade {
 
     public Film cercaPerId(String id) {
         return service.trovaPerId(id);
+    }
+
+    //Metodi per integrare il pattern Memento (cioè supportare operazioni di undo/redo)
+    
+    //Salva uno snapshot dello stato corrente prima di una modifica
+    private void salvaStato() {
+        List<Film> statoCorrente = service.trovaTutti();
+        VideotecaMemento memento = new VideotecaMemento(statoCorrente);
+        cronologia.add(memento);
+    }
+
+    //Per annullare l'ultima modifica (nb: è consentito solo se esiste uno stato precedente)
+    public void annullaUltimaOperazione() {
+        if (cronologia.isEmpty()) {
+            System.out.println("Nessuna operazione da annullare");
+            return;
+        }
+
+        VideotecaMemento ultimo = cronologia.remove(cronologia.size() - 1);
+        List<Film> statoPrecedente = ultimo.getStatoSalvato();
+
+        // Rimpiazza lo stato corrente con quello precedente (creo un nuovo service e ricarico i film salvati)
+        FilmService nuovoService = new FilmService();
+        for (Film f : statoPrecedente) {
+            nuovoService.aggiungiFilm(f.toDTO());
+        }
+        this.cronologia.clear();
+        this.cronologia.add(new VideotecaMemento(statoPrecedente));
+        System.out.println("Stato precedente ripristinato");
     }
 }
