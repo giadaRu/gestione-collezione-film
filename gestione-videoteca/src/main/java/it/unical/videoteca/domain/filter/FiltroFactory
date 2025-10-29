@@ -1,0 +1,20 @@
+package it.unical.videoteca.domain.filter;
+
+import it.unical.videoteca.domain.model.StatoVisione;
+
+//Factory: crea l'istanza corretta in base allo specifico filtro richiesto
+public class FiltroFactory {
+
+    public static FiltroFilm creaFiltro(String tipo, Object valore) {
+        switch (tipo.toLowerCase()) {
+            case "genere":
+                return new FiltroPerGenere((String) valore);
+            case "stato":
+                return new FiltroPerStato((StatoVisione) valore);
+            case "regista":
+                return new FiltroPerRegista((String) valore);
+            default:
+                throw new IllegalArgumentException("Tipo di filtro non supportato: " + tipo);
+        }
+    }
+}
