@@ -66,4 +66,9 @@ public class VideotecaFacade {
         this.cronologia.add(new VideotecaMemento(statoPrecedente));
         System.out.println("Stato precedente ripristinato");
     }
+
+    //Per cercare film usando una combinazione di filtri 
+    public List<Film> cercaConFiltri(List<FiltroFilm> filtri) {
+        return service.cercaConFiltri(filtri);
+    }
 }
