@@ -76,4 +76,24 @@ public class FilmService {
         }
         return risultato;
     }
+
+    //Metodi per supportare la ricerca filtrata 
+    
+    //Applica una lista di filtri (come strategies) ai film presenti nel repository
+    public List<Film> cercaConFiltri(List<FiltroFilm> filtri) {
+        List<Film> tutti = repository.findAll();
+        List<Film> risultato = new ArrayList<>();
+
+        for (Film f : tutti) {
+            boolean accetta = true;
+            for (FiltroFilm filtro : filtri) {
+                if (!filtro.applica(f)) {
+                    accetta = false;
+                    break;
+                }
+            }
+            if (accetta) risultato.add(f);
+        }
+        return risultato;
+    }
 }
