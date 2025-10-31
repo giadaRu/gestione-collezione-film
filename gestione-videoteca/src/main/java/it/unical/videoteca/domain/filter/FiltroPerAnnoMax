@@ -1,0 +1,16 @@
+package it.unical.videoteca.domain.filter;
+
+import it.unical.videoteca.domain.model.Film;
+
+public class FiltroPerAnnoMax implements FiltroFilm {
+    private final int annoMax;
+
+    public FiltroPerAnnoMax(int annoMax) {
+        this.annoMax = annoMax;
+    }
+
+    @Override
+    public boolean applica(Film film) {
+        return film.getAnno() <= annoMax;
+    }
+}
