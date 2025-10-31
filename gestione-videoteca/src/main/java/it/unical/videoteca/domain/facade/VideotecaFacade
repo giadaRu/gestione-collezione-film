@@ -8,12 +8,16 @@ public class VideotecaFacade {
 
     private final FilmService service;
     private final List<VideotecaMemento> cronologia; //per gestire gli stati precedenti
+    private final RaccoltaService raccoltaService;
 
     public VideotecaFacade() {
         this.service = new FilmService();
+        this.raccoltaService = new RaccoltaService();
+        filmService.addObserver(raccoltaService); // collegamento Observer
+
     }
 
-    //Metodi base -----------------------------------
+    //Metodi base  (per gestione di film)------------------------------
     public void aggiungiFilm(FilmDTO dto) {
         service.aggiungiFilm(dto);
     }
@@ -36,6 +40,31 @@ public class VideotecaFacade {
 
     public Film cercaPerId(String id) {
         return service.trovaPerId(id);
+    }
+
+    //Metodi per la gestione delle raccolte -----
+    public void creaRaccolta(String id, String nome, String descrizione) {
+        raccoltaService.creaRaccolta(id, nome, descrizione);
+    }
+
+    public void eliminaRaccolta(String id) {
+        raccoltaService.eliminaRaccolta(id);
+    }
+
+    public void aggiungiFilmARaccolta(String raccoltaId, String filmId) {
+        raccoltaService.aggiungiFilm(raccoltaId, filmId);
+    }
+
+    public void rimuoviFilmDaRaccolta(String raccoltaId, String filmId) {
+        raccoltaService.rimuoviFilm(raccoltaId, filmId);
+    }
+
+    public List<Raccolta> tutteLeRaccolte() {
+        return raccoltaService.tutte();
+    }
+
+    public List<Film> filmDellaRaccolta(String id) {
+        return raccoltaService.filmDellaRaccolta(id);
     }
 
     //Metodi per integrare il pattern Memento (cioè supportare operazioni di undo/redo)
