@@ -3,12 +3,12 @@ package domain;
 import java.util.*;
 
 public class Film {
-    private String id;              // generato dal repository
+    private String id;              //viene generato dal repository
     private String titolo;
     private String regista;
-    private Integer anno;           // consente anche valore assente
+    private Integer anno;           //può anche non esserci
     private String genere;
-    private Double rating;          // da 1 a 5 (può essere null se non valutato)
+    private Double rating;          //da 1 a 5 (può essere null se non valutato)
     private StatoVisione stato;
 
     // Costruttori
