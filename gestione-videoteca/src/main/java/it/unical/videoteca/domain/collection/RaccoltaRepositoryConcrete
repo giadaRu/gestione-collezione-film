@@ -1,0 +1,59 @@
+package it.unical.videoteca.domain.collection;
+
+import java.util.ArrayList;
+import java.util.List;
+
+//Implementazione in memoria del repository delle raccolte tematiche
+public class RaccoltaRepositoryConcrete implements RaccoltaRepository {
+
+    private final List<Raccolta> archivio = new ArrayList<>();
+
+    //Aggiunge o aggiorna una raccolta
+    @Override
+    public void save(Raccolta r) {
+        if (r == null) 
+            throw new IllegalArgumentException("Raccolta nulla");
+        Raccolta esistente = findById(r.getId());
+        if (esistente != null) 
+            archivio.remove(esistente);
+        archivio.add(r);
+    }
+
+    //Elimina una raccolta in base all'id
+    @Override
+    public void delete(String id) {
+        Raccolta target = findById(id);
+        if (target != null) 
+            archivio.remove(target);
+    }
+
+    //Restituisce la raccolta corrispondente all'id, o null se non esiste
+    @Override
+    public Raccolta findById(String id) {
+        if (id == null || id.isBlank())    
+            return null;
+        for (Raccolta r : archivio) {
+            if (r.getId().equals(id)) 
+                return r;
+        }
+        return null;
+    }
+
+    //Restituisce una copia della lista di raccolte
+    @Override
+    public List<Raccolta> findAll() {
+        return new ArrayList<>(archivio);
+    }
+
+    //Controlla se esiste una raccolta con lo stesso nome
+    @Override
+    public boolean existsByName(String nome) {
+        if (nome == null || nome.isBlank()) 
+            return false;
+        for (Raccolta r : archivio) {
+            if (r.getNome().equalsIgnoreCase(nome)) 
+                return true;
+        }
+        return false;
+    }
+}
