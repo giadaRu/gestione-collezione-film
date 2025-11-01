@@ -35,13 +35,6 @@ public class FilmService implements Observable{
         repository.save(film);
     }
 
-    //Rimuove un film dato il suo ID
-    public void rimuoviFilm(String id) {
-        if (id == null || id.isBlank())
-            throw new IllegalArgumentException("ID non valido");
-        repository.delete(id);
-    }
-
     //Modifica un film esistente (stesso ID)
     public void modificaFilm(FilmDTO dto) {
         if (dto == null)
@@ -58,12 +51,7 @@ public class FilmService implements Observable{
 
     //Trova un film per ID (se non esiste->null)
     public Film trovaPerId(String id) {
-        List<Film> tutti = repository.findAll();
-        for (Film f : tutti) {
-            if (f.getId().equals(id))
-                return f;
-        }
-        return null;
+       return repository.findById(id);
     }
 
     //Restituisce tutti i film che appartengono al genere passato come parametro
@@ -77,6 +65,49 @@ public class FilmService implements Observable{
         }
         return risultato;
     }
+
+
+    //Restituisce i film il cui titolo contiene la stringa passata come parametro 
+    public List<Film> trovaPerTitolo(String titoloRicerca) {
+        if (titoloRicerca == null || titoloRicerca.isBlank()) {
+            return repository.findAll(); 
+        }
+        
+        List<Film> risultato = new ArrayList<>();
+        String titoloNorm = titoloRicerca.trim().toLowerCase();
+
+        for (Film f : repository.findAll()) {
+            if (f.getTitolo() != null && f.getTitolo().toLowerCase().contains(titoloNorm)) {
+                risultato.add(f);
+            }
+        }
+        return risultato;
+    }
+
+    //Restituisce i film di un regista specifico 
+    public List<Film> trovaPerRegista(String registaRicerca) {
+        if (registaRicerca == null || registaRicerca.isBlank()) {
+            return new ArrayList<>();
+        }
+        
+        List<Film> risultato = new ArrayList<>();
+        String registaNorm = registaRicerca.trim().toLowerCase();
+
+        for (Film f : repository.findAll()) {
+            if (f.getRegista() != null && f.getRegista().trim().toLowerCase().equals(registaNorm)) {
+                risultato.add(f);
+            }
+        }
+        return risultato;
+    }
+
+    
+
+    // Per ripristinare lo stato quando si fa un UNDO
+    public void ripristinaStato(List<Film> stato) {
+        repository.clearAndSaveAll(stato); 
+    }
+
 
     //Metodi per supportare la ricerca filtrata------------------------------------------------ 
     
@@ -93,9 +124,18 @@ public class FilmService implements Observable{
                     break;
                 }
             }
-            if (accetta) risultato.add(f);
+            if (accetta) 
+                risultato.add(f);
         }
         return risultato;
+    }
+
+    //Ricerca con filtri + ordinamento
+    //nb: se si passa una lista di filtri vuoti, si effettua semplicemente l'ordinamento di tutti i film (senza filtri)
+    public List<Film> cercaConFiltriOrdinati(List<FiltroFilm> filtri, FilmSortStrategy.Criterio criterio, FilmSortStrategy.Ordine ordine) {
+        List<Film> filtrati = cercaConFiltri(filtri);
+        Collections.sort(filtrati, FilmSortStrategy.comparator(criterio, ordine));
+        return filtrati;
     }
 
     //Metodi per implementare Observable---------------------------------------------------------

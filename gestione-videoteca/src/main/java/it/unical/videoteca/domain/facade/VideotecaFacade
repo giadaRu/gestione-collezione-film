@@ -42,6 +42,14 @@ public class VideotecaFacade {
         return service.trovaPerId(id);
     }
 
+    public List<Film> cercaPerTitolo(String titolo) {
+        return service.trovaPerTitolo(titolo);
+    }
+
+    public List<Film> cercaPerRegista(String regista) {
+        return service.trovaPerRegista(regista);
+    }
+
     //Metodi per la gestione delle raccolte -----
     public void creaRaccolta(String id, String nome, String descrizione) {
         raccoltaService.creaRaccolta(id, nome, descrizione);
@@ -83,16 +91,10 @@ public class VideotecaFacade {
             return;
         }
 
-        VideotecaMemento ultimo = cronologia.remove(cronologia.size() - 1);
-        List<Film> statoPrecedente = ultimo.getStatoSalvato();
+        cronologia.remove(cronologia.size() - 1);
+        VideotecaMemento ultimoStato = cronologia.get(size()-1);
 
-        // Rimpiazza lo stato corrente con quello precedente (creo un nuovo service e ricarico i film salvati)
-        FilmService nuovoService = new FilmService();
-        for (Film f : statoPrecedente) {
-            nuovoService.aggiungiFilm(f.toDTO());
-        }
-        this.cronologia.clear();
-        this.cronologia.add(new VideotecaMemento(statoPrecedente));
+        service.ripristinaStato(ultimoStato.getStatoSalvato());
         System.out.println("Stato precedente ripristinato");
     }
 

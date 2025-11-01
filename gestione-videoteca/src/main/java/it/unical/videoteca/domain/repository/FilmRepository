@@ -12,7 +12,7 @@ public interface FilmRepository {
     void delete(String id);
 
     //Restituisce un film cercandolo per ID, se esiste
-    Optional<Film> findById(String id);
+    Film findById(String id);
 
     //Restituisce tutti i film presenti nel repository
     List<Film> findAll();
@@ -20,4 +20,8 @@ public interface FilmRepository {
     
     //Controlla se esiste già un film con gli stessi parametri (per garantire unicità)
     boolean exists(String titolo, String regista, int anno);
+
+    //Svuota l'archivio corrente per ripristinare gli stati precedenti (in operazione di UNDO)
+    void clearAndSaveAll(List<Film> film);
+
 }

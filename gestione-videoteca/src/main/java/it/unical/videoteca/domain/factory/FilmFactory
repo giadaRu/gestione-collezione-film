@@ -6,6 +6,6 @@ import domain.model.Film;
 
 public interface FilmFactory {
 
-    // Per convertire un FilmDTO in un'entità Film.
+    //Per convertire un FilmDTO in un'entità Film
     Film fromDTO(FilmDTO dto);
 }
