@@ -1,6 +1,6 @@
 package it.unical.videoteca.domain.filter;
 
-import it.unical.videoteca.domain.model.Film;
+import it.unical.videoteca.domain.entity.Film;
 
 //Strategy: definisce l'interfaccia comune per tutti i filtri
 

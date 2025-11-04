@@ -1,7 +1,6 @@
-package domain;
+package it.unical.videoteca.domain.dto;
 
-import domain.Film;
-import domain.StatoVisione;
+import it.unical.videoteca.domain.*;
 
 public class FilmDTO {
 

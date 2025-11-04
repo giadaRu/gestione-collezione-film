@@ -1,8 +1,6 @@
-package domain.factory;
+package it.unical.videoteca.domain.factory;
 
-import domain.dto.FilmDTO;
-import domain.model.Film;
-
+import it.unical.videoteca.domain.*;
 
 public interface FilmFactory {
 

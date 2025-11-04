@@ -1,7 +1,7 @@
 package it.unical.videoteca.domain.repository;
 
 import java.util.*;
-import it.unical.videoteca.domain.model.Film;
+import it.unical.videoteca.domain.entity.Film;
 
 public interface FilmRepository {
 

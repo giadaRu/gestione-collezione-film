@@ -1,6 +1,6 @@
 package it.unical.videoteca.domain.filter;
 
-import it.unical.videoteca.domain.model.Film;
+import it.unical.videoteca.domain.entity.Film;
 
 public class FiltroPerRatingMin implements FiltroFilm {
     private final double ratingMin;

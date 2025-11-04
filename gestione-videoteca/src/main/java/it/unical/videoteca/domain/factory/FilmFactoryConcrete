@@ -1,8 +1,6 @@
-package domain.factory;
+package it.unical.domain.factory;
 
-import domain.dto.FilmDTO;
-import domain.model.Film;
-import domain.model.StatoVisione;
+import it.unical.videoteca.domain.*;
 
 
 public class FilmFactoryConcrete implements FilmFactory {
