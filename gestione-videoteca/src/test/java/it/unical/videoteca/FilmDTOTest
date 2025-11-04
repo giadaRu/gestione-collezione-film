@@ -1,8 +1,7 @@
-package it.unical.videoteca.domain.dto;
+package it.unical.videoteca;
 
 import org.junit.jupiter.api.Test;
-import it.unical.videoteca.domain.model.Film;
-import it.unical.videoteca.domain.model.StatoVisione;
+import it.unical.videoteca.domain.entity.*;
 
 public class FilmDTOTest {
 

@@ -1,4 +1,4 @@
-package test.it.unical.videoteca;
+package it.unical.videoteca;
 
 import org.junit.jupiter.api.*;
 import main.it.unical.videoteca.domain.*;
