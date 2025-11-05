@@ -7,13 +7,13 @@ import it.unical.videoteca.domain.*;
 public class VideotecaFacade {
 
     private final FilmService service;
-    private final List<VideotecaMemento> cronologia; //per gestire gli stati precedenti
+    private final List<VideotecaMemento> cronologia = new ArrayList<>(); //per gestire gli stati precedenti
     private final RaccoltaService raccoltaService;
 
     public VideotecaFacade() {
         this.service = new FilmService();
         this.raccoltaService = new RaccoltaService();
-        filmService.addObserver(raccoltaService); // collegamento Observer
+        this.service.addObserver(raccoltaService); // collegamento Observer
 
     }
 
@@ -86,13 +86,13 @@ public class VideotecaFacade {
 
     //Per annullare l'ultima modifica (nb: è consentito solo se esiste uno stato precedente)
     public void annullaUltimaOperazione() {
-        if (cronologia.isEmpty()) {
+        if (cronologia.size()<=1) {
             System.out.println("Nessuna operazione da annullare");
             return;
         }
 
         cronologia.remove(cronologia.size() - 1);
-        VideotecaMemento ultimoStato = cronologia.get(size()-1);
+        VideotecaMemento ultimoStato = cronologia.get(cronologia.size()-1);
 
         service.ripristinaStato(ultimoStato.getStatoSalvato());
         System.out.println("Stato precedente ripristinato");
