@@ -3,8 +3,10 @@ package it.unical.videoteca.domain.service;
 import java.util.*;
 import it.unical.videoteca.domain.dto.FilmDTO;
 import it.unical.videoteca.domain.factory.*;
+import it.unical.videoteca.domain.filter.FiltroFilm;
 import it.unical.videoteca.domain.entity.Film;
-import it.unical.videoteca.domain.observer.*;
+import it.unical.videoteca.domain.observer.Observer;
+import it.unical.videoteca.domain.observer.Observable;
 import it.unical.videoteca.domain.repository.*;
 
 

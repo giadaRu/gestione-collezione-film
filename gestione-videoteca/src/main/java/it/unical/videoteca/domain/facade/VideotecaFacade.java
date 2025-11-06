@@ -1,7 +1,12 @@
 package it.unical.videoteca.domain.facade;
 
 import java.util.*;
-import it.unical.videoteca.domain.*;
+import it.unical.videoteca.domain.service.FilmService;
+import it.unical.videoteca.domain.memento.VideotecaMemento;
+import it.unical.videoteca.domain.collection.*;
+import it.unical.videoteca.domain.dto.FilmDTO;
+import it.unical.videoteca.domain.entity.*;
+import it.unical.videoteca.domain.filter.FiltroFilm;
 
 
 public class VideotecaFacade {
@@ -12,21 +17,24 @@ public class VideotecaFacade {
 
     public VideotecaFacade() {
         this.service = new FilmService();
-        this.raccoltaService = new RaccoltaService();
+        this.raccoltaService = new RaccoltaService(new RaccoltaRepositoryConcrete(), this.service);
         this.service.addObserver(raccoltaService); // collegamento Observer
-
+        salvaStato(); //salvo lo stato iniziale, anche se vuoto
     }
 
     //Metodi base  (per gestione di film)------------------------------
     public void aggiungiFilm(FilmDTO dto) {
+        salvaStato();
         service.aggiungiFilm(dto);
     }
 
     public void rimuoviFilm(String id) {
+        salvaStato();
         service.rimuoviFilm(id);
     }
 
     public void modificaFilm(FilmDTO dto) {
+        salvaStato();
         service.modificaFilm(dto);
     }
 
@@ -60,7 +68,10 @@ public class VideotecaFacade {
     }
 
     public void aggiungiFilmARaccolta(String raccoltaId, String filmId) {
-        raccoltaService.aggiungiFilm(raccoltaId, filmId);
+        Film film = service.trovaPerId(filmId);
+        if (film == null)
+            throw new IllegalArgumentException("film non trovato");
+        raccoltaService.aggiungiFilm(raccoltaId, film.getId());
     }
 
     public void rimuoviFilmDaRaccolta(String raccoltaId, String filmId) {
@@ -86,13 +97,12 @@ public class VideotecaFacade {
 
     //Per annullare l'ultima modifica (nb: è consentito solo se esiste uno stato precedente)
     public void annullaUltimaOperazione() {
-        if (cronologia.size()<=1) {
+        if (cronologia.size()<2) { //servono salmeno stato iniziale + 1 modifica (2 snapshot)
             System.out.println("Nessuna operazione da annullare");
             return;
         }
 
-        cronologia.remove(cronologia.size() - 1);
-        VideotecaMemento ultimoStato = cronologia.get(cronologia.size()-1);
+        VideotecaMemento ultimoStato =  cronologia.remove(cronologia.size() - 1);
 
         service.ripristinaStato(ultimoStato.getStatoSalvato());
         System.out.println("Stato precedente ripristinato");

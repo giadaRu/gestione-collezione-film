@@ -2,7 +2,7 @@ package it.unical.videoteca.domain.memento;
 
 import java.util.ArrayList;
 import java.util.List;
-import it.unical.videoteca.domain.*;
+import it.unical.videoteca.domain.entity.*;;
 
 
 public class VideotecaMemento {

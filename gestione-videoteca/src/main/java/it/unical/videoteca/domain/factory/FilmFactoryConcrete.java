@@ -1,6 +1,7 @@
-package it.unical.domain.factory;
+package it.unical.videoteca.domain.factory;
 
-import it.unical.videoteca.domain.*;
+import it.unical.videoteca.domain.dto.*;
+import it.unical.videoteca.domain.entity.*;
 
 
 public class FilmFactoryConcrete implements FilmFactory {

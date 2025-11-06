@@ -1,7 +1,9 @@
 package it.unical.videoteca.domain.repository;
 
+import java.io.*;
 import java.util.*;
 import it.unical.videoteca.domain.entity.Film;
+import it.unical.videoteca.domain.entity.StatoVisione;
 
 
 public class FilmRepositoryConcrete implements FilmRepository {
@@ -22,7 +24,7 @@ public class FilmRepositoryConcrete implements FilmRepository {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String film;
             while ((film = br.readLine()) != null) {
-                String[] parts = line.split(";");
+                String[] parts = film.split(";");
                 if (parts.length == 7) {
                     try {
                         Film f = new Film(
@@ -48,13 +50,13 @@ public class FilmRepositoryConcrete implements FilmRepository {
     private void salvaSuFile() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILM_FILE_PATH))) {
             for (Film f : archivio) {
-                String film = String.join(" ",
+                String film = String.join(";",
                     f.getId(),
                     f.getTitolo(),
                     f.getRegista().toString(),
-                    f.getAnno().toString(),
+                    String.valueOf(f.getAnno()),
                     f.getGenere() != null ? f.getGenere() : "",
-                    f.getRating().toString(),
+                    String.valueOf(f.getRating()),
                     f.getStato().toString()
                 );
                 bw.write(film);
@@ -70,17 +72,24 @@ public class FilmRepositoryConcrete implements FilmRepository {
         if (film == null)
             throw new IllegalArgumentException("Il film da salvare non può essere null");
 
-        // Cerco un film con lo stesso id → aggiorna
-        Film filmDaAggiornare = null;
-        for (Film f : archivio) {
-            if (f.getId().equals(film.getId())) {
-                filmDaAggiornare = f;
+        //cerco per ID (update)
+        int idx = -1;
+        for (int i = 0; i < archivio.size(); i++) {
+            if (archivio.get(i).getId().equals(film.getId())) {
+                idx = i;
                 break;
             }
         }
-        //Se esiste, rimuovo la versione vecchia, quindi sto aggiornando
-        if (filmDaAggiornare != null) {
-            archivio.remove(filmDaAggiornare);
+
+        if (idx >= 0) {
+            archivio.set(idx, film); //aggiorno: sostituisco la versione esistente (stesso ID)
+            salvaSuFile();
+            return;
+        }
+
+        // blocco duplicati logici (titolo+regista+anno) con ID diverso
+        if (exists(film.getTitolo(), film.getRegista(), film.getAnno())) {
+            throw new IllegalArgumentException( "Film duplicato (titolo, regista, anno): " + film.getTitolo() + " - " + film.getRegista() + " - " + film.getAnno());
         }
 
         archivio.add(film); //Altrimenti, aggiungo il nuovo film (nb: la validazione di unicità è gestita da aggiungiFilm in FilmService)
@@ -139,7 +148,10 @@ public class FilmRepositoryConcrete implements FilmRepository {
     @Override
     public void clearAndSaveAll(List<Film> film) {
         this.archivio.clear(); //svuoto l'archivio corrente
-        this.archivio.addAll(film); //aggiungo tutti i film dello stato precedente
+        for (Film f : film){
+            Film nuovo = new Film(f.getId(), f.getTitolo(), f.getRegista(), f.getAnno(), f.getGenere(), f.getRating(), f.getStato());
+            archivio.add(nuovo);
+        }
     }
 
 }

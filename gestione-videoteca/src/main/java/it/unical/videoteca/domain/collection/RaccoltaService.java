@@ -2,29 +2,31 @@ package it.unical.videoteca.domain.collection;
 
 import java.util.ArrayList;
 import java.util.List;
-import it.unical.videoteca.domain.*;
+import it.unical.videoteca.domain.observer.*;
+import it.unical.videoteca.domain.entity.*;
+import it.unical.videoteca.domain.service.FilmService;
 
-//Gestisce le raccolte e si aggiorna automaticamente quando un film viene eliminato dal catalogo (Observer Pattern)
 public class RaccoltaService implements Observer {
 
     private final RaccoltaRepository raccolte;
-    private final FilmRepository filmRepo;
+    private final FilmService filmService;   //uso lo stesso service della facade
 
     public RaccoltaService() {
-        this.raccolte = new RaccoltaRepositoryConcrete();
-        this.filmRepo = new FilmRepositoryConcrete();
+        this(new RaccoltaRepositoryConcrete(), new FilmService());
+    }
+
+    public RaccoltaService(RaccoltaRepository raccolte, FilmService filmService) {
+        this.raccolte = raccolte;
+        this.filmService = filmService;
     }
 
     public void creaRaccolta(String id, String nome, String descrizione) {
         if (raccolte.existsByName(nome))
             throw new IllegalStateException("Esiste già una raccolta con questo nome");
-        Raccolta r = new Raccolta(id, nome, descrizione);
-        raccolte.save(r);
+        raccolte.save(new Raccolta(id, nome, descrizione));
     }
 
-    public void eliminaRaccolta(String id) {
-        raccolte.delete(id);
-    }
+    public void eliminaRaccolta(String id) { raccolte.delete(id); }
 
     public void aggiornaMetadati(String id, String nuovoNome, String nuovaDescrizione) {
         Raccolta r = raccolte.findById(id);
@@ -41,10 +43,21 @@ public class RaccoltaService implements Observer {
         Raccolta r = raccolte.findById(raccoltaId);
         if (r == null) 
             throw new IllegalArgumentException("Raccolta non trovata");
-        Film f = filmRepo.findById(filmId);
+        Film f = filmService.trovaPerId(filmId);              
         if (f == null) 
             throw new IllegalArgumentException("Film non trovato");
-        r.addFilm(filmId);
+        r.addFilm(f.getId());                                 
+        raccolte.save(r);
+    }
+
+    // overload che accetta direttamente il Film
+    public void aggiungiFilm(String raccoltaId, Film film) {
+        Raccolta r = raccolte.findById(raccoltaId);
+        if (r == null) 
+            throw new IllegalArgumentException("Raccolta non trovata");
+        if (film == null) 
+            throw new IllegalArgumentException("Film nullo");
+        r.addFilm(film.getId());
         raccolte.save(r);
     }
 
@@ -56,9 +69,7 @@ public class RaccoltaService implements Observer {
         raccolte.save(r);
     }
 
-    public List<Raccolta> tutte() {
-        return raccolte.findAll();
-    }
+    public List<Raccolta> tutte() { return raccolte.findAll(); }
 
     public List<Film> filmDellaRaccolta(String raccoltaId) {
         Raccolta r = raccolte.findById(raccoltaId);
@@ -66,24 +77,20 @@ public class RaccoltaService implements Observer {
             throw new IllegalArgumentException("Raccolta non trovata");
         List<Film> out = new ArrayList<>();
         for (String filmId : r.getFilmIds()) {
-            Film f = filmRepo.findById(filmId);
+            Film f = filmService.trovaPerId(filmId);          
             if (f != null) 
                 out.add(f);
         }
         return out;
     }
 
-    /** Observer: aggiornamento automatico quando un film viene eliminato. */
     @Override
     public void update(String filmId) {
-        List<Raccolta> lista = raccolte.findAll();
-        for (Raccolta r : lista) {
+        for (Raccolta r : raccolte.findAll()) {
             if (r.contiene(filmId)) {
                 r.removeFilm(filmId);
                 raccolte.save(r);
-                System.out.println("Film " + filmId + " rimosso anche dalla raccolta '" + r.getNome() + "'");
             }
         }
     }
 }
-

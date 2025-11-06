@@ -1,6 +1,6 @@
 package it.unical.videoteca.domain.dto;
 
-import it.unical.videoteca.domain.*;
+import it.unical.videoteca.domain.entity.*;;
 
 public class FilmDTO {
 
