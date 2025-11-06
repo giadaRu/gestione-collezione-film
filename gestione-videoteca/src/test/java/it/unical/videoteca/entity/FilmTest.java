@@ -1,6 +1,7 @@
-package it.unical.videoteca;
+package it.unical.videoteca.entity;
 
 import org.junit.jupiter.api.Test;
+import it.unical.videoteca.domain.entity.*;
 
 public class FilmTest {
 

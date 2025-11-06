@@ -1,10 +1,21 @@
-package it.unical.videoteca;
+package it.unical.videoteca.repository;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import it.unical.videoteca.domain.*;
+import it.unical.videoteca.domain.entity.*;
+import it.unical.videoteca.domain.repository.*;
 
 
 public class FilmRepositoryTest {
+
+    @BeforeEach
+    void cleanPersistence() throws Exception {Files.deleteIfExists(Path.of("videoteca_data.csv"));}
+
 
     @Test
     void testAggiuntaFilm() {
@@ -22,7 +33,7 @@ public class FilmRepositoryTest {
         if (!repo.exists("Inception", "Nolan", 2010))
             throw new RuntimeException("Errore: Inception non trovato nel repository");
 
-        Film trovato = repo.findById("ID1").orElse(null);
+        Film trovato = repo.findById("ID1");
         if (trovato == null || !trovato.getTitolo().equals("Inception"))
             throw new RuntimeException("Errore: findById non funziona correttamente");
 
@@ -40,13 +51,8 @@ public class FilmRepositoryTest {
         Film f1 = new Film("X1", "Dunkirk", "Nolan", 2017, "War", 4.0, StatoVisione.VISTO);
         Film f2 = new Film("X2", "Dunkirk", "Nolan", 2017, "War", 3.5, StatoVisione.DA_VEDERE);
 
-        repo.save(f1);
-
-        try {
-            repo.save(f2);
-            throw new RuntimeException("Errore: doveva lanciare eccezione per film duplicato");
-        } catch (IllegalStateException e) {
-            System.out.println(" Eccezione correttamente lanciata per film duplicato");
-        }
+        assertDoesNotThrow(()->repo.save(f1));
+        assertThrows(IllegalArgumentException.class, () -> repo.save(f2));
+        
     }
 }

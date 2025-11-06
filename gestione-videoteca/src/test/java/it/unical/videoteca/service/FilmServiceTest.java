@@ -1,9 +1,18 @@
-package it.unical.videoteca;
+package it.unical.videoteca.service;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import it.unical.videoteca.domain.*;
+import it.unical.videoteca.domain.service.*;
+import it.unical.videoteca.domain.entity.*;
+import it.unical.videoteca.domain.dto.*;
 
 public class FilmServiceTest {
+    
+    @BeforeEach
+    void cleanPersistence() throws Exception {Files.deleteIfExists(Path.of("videoteca_data.csv"));}
+
 
     @Test
     void testAggiuntaRimozioneRicerca() {

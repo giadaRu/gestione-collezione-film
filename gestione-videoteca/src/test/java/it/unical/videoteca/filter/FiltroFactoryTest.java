@@ -1,10 +1,21 @@
-package it.unical.videoteca;
+package it.unical.videoteca.filter;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import it.unical.videoteca.domain.*;
+import it.unical.videoteca.domain.facade.*;
+import it.unical.videoteca.domain.entity.*;
+import it.unical.videoteca.domain.filter.*;
+import it.unical.videoteca.domain.dto.*;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 public class FiltroFactoryTest {
+    
+    @BeforeEach
+    void cleanPersistence() throws Exception {Files.deleteIfExists(Path.of("videoteca_data.csv"));}
+
 
     @Test
     void testFiltriMultipli() {

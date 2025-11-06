@@ -1,35 +1,45 @@
-package it.unical.videoteca;
+package it.unical.videoteca.facade;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import it.unical.videoteca.domain.*;
+
+import it.unical.videoteca.domain.dto.FilmDTO;
+import it.unical.videoteca.domain.entity.StatoVisione;
+import it.unical.videoteca.domain.facade.VideotecaFacade;
 
 public class VideotecaFacadeTest {
+
+    @BeforeEach
+    void cleanPersistence() throws Exception {Files.deleteIfExists(Path.of("videoteca_data.csv"));}
 
     @Test
     //per verificare se aggiunta, rimozione e ricerca (sia per id sia per genere) di un film funzionano correttamente
     void testAggiungiRimuovi() {
         VideotecaFacade facade = new VideotecaFacade();
 
+        //aggiungo due film non duplicati
         FilmDTO f1 = new FilmDTO("1", "Inception", "Christopher Nolan", 2010, "Fantascienza", 5.0, StatoVisione.VISTO);
         FilmDTO f2 = new FilmDTO("2", "Interstellar", "Christopher Nolan", 2014, "Fantascienza", 4.8, StatoVisione.DA_VEDERE);
 
-        facade.aggiungiFilm(f1);
-        facade.aggiungiFilm(f2);
+        //non devono lanciare eccezioni in inserimento
+        assertDoesNotThrow(() -> facade.aggiungiFilm(f1));
+        assertDoesNotThrow(() -> facade.aggiungiFilm(f2));
 
-        if (facade.listaFilm().size() != 2)
-            throw new RuntimeException("Errore: non risultano due film aggiunti correttamente");
+        //dopo 2 insert devono esserci 2 film
+        assertEquals(2, facade.listaFilm().size(), "Dopo due inserimenti la lista deve avere size=2");
 
-        if (facade.cercaPerId("1") == null)
-            throw new RuntimeException("Errore: cercaPerId non restituisce il film atteso");
+        //ne rimuovo uno
+        assertDoesNotThrow(() -> facade.rimuoviFilm(
+                facade.cercaPerTitolo("Inception").get(0).getId()));
 
-        if (facade.cercaPerGenere("Fantascienza").size() != 2)
-            throw new RuntimeException("Errore: cercaPerGenere non restituisce entrambi i film");
-
-        facade.rimuoviFilm("2");
-        if (facade.listaFilm().size() != 1)
-            throw new RuntimeException("Errore: il film non è stato rimosso correttamente");
-
-        System.out.println("VideotecaFacadeTest: aggiunta, rimozione e ricerca funzionano correttamente");
+        //deve rimanere 1
+        assertEquals(1, facade.listaFilm().size(), "Dopo la rimozione deve restare size=1");
     }
 
     @Test

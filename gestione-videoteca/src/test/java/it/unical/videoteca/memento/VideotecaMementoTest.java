@@ -1,12 +1,24 @@
-package it.unical.videoteca;
+package it.unical.videoteca.memento;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import it.unical.videoteca.domain.dto.*;
+import it.unical.videoteca.domain.entity.*;
+import it.unical.videoteca.domain.facade.*;
 
 public class VideotecaMementoTest {
+    
+    @BeforeEach
+    void cleanPersistence() throws Exception {Files.deleteIfExists(Path.of("videoteca_data.csv"));}
+
 
     @Test
-    void testUndoRedo() {
+    void testUndo() {
         VideotecaFacade facade = new VideotecaFacade();
 
         FilmDTO f1 = new FilmDTO("1", "Inception", "Nolan", 2010, "Fantascienza", 5.0, StatoVisione.VISTO);
@@ -16,20 +28,16 @@ public class VideotecaMementoTest {
         facade.aggiungiFilm(f1);
         facade.aggiungiFilm(f2);
 
-        if (facade.listaFilm().size() != 2)
-            throw new RuntimeException("Errore: non risultano 2 film aggiunti inizialmente");
+        assertEquals(2, facade.listaFilm().size(), "Dopo due aggiunte, size deve essere 2");
 
-        facade.rimuoviFilm("2");
+        // faccio una terza aggiunta
+        facade.aggiungiFilm(f3);
+        assertEquals(3, facade.listaFilm().size(), "Dopo terza aggiunta, size deve essere 3");
 
-        if (facade.listaFilm().size() != 1)
-            throw new RuntimeException("Errore: la rimozione non ha funzionato");
-
+        //UNDO: deve tornare allo stato precedente (2 elementi)
         facade.annullaUltimaOperazione();
+        assertEquals(2, facade.listaFilm().size(), "Undo non ha ripristinato size=2");
 
-        if (facade.listaFilm().size() != 2)
-            throw new RuntimeException("Errore: annullaUltimaOperazione non ha ripristinato lo stato precedente");
-
-        System.out.println("VideotecaMementoTest: undo ha ripristinato correttamente lo stato precedente");
     }
 
     @Test
