@@ -26,7 +26,10 @@ public class MainVideoteca {
                 case 1 -> aggiungiFilm();
                 case 2 -> modificaFilm();
                 case 3 -> rimuoviFilm();
-                case 4 -> mostraTutti();
+                case 4 -> {
+                    List<Film> catalogo = facade.listaFilm();
+                    stampaTabellaFilm(catalogo);
+                    }
                 case 5 -> cercaPerTitolo();
                 case 6 -> cercaFiltrata();
                 case 7 -> undoUltimaOperazione();
@@ -96,11 +99,6 @@ public class MainVideoteca {
         System.out.println("Film rimosso correttamente.");
     }
 
-    private static void mostraTutti() {
-        System.out.println("\n--- Lista dei film ---");
-        facade.listaFilm().forEach(f -> System.out.printf("[%s] %s (%d) %s %.1f %s%n",
-                f.getId(), f.getTitolo(), f.getAnno(), f.getRegista(), f.getRating(), f.getStato()));
-    }
 
     private static void cercaPerTitolo() {
         System.out.print("\nInserisci parte del titolo: ");
@@ -202,4 +200,28 @@ public class MainVideoteca {
             catch (NumberFormatException e) { System.out.print("Valore non valido. Riprova: "); }
         }
     }
+
+    private static void stampaTabellaFilm(List<Film> filmList) {
+        if (filmList == null || filmList.isEmpty()) {
+            System.out.println("\n Nessun film presente nel catalogo.\n");
+            return;
+        }
+
+        System.out.println("\n                         Ecco il tuo catalogo \n");
+        System.out.printf("%-8s %-20s %-20s %-6s %-7s %-10s%n",
+                "ID", "Titolo", "Regista", "Anno", "Rating", "Stato");
+        System.out.println("-------------------------------------------------------------------------------------");
+
+        for (Film f : filmList) {
+            System.out.printf("%-8s %-20s %-20s %-6s %-7s %-10s%n",
+                    f.getId(),
+                    Optional.ofNullable(f.getTitolo()).orElse("N/D"),
+                    Optional.ofNullable(f.getRegista()).orElse("N/D"),
+                    f.getAnno() != null ? f.getAnno().toString() : "N/D",
+                    f.getRating() != null ? String.format("%.1f", f.getRating()) : "N/D",
+                    f.getStato() != null ? f.getStato().name() : "N/D");
+        }
+        System.out.println("-------------------------------------------------------------------------------------\n");
+}
+
 }
