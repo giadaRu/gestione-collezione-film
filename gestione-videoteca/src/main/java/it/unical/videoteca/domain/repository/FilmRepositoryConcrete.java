@@ -72,6 +72,15 @@ public class FilmRepositoryConcrete implements FilmRepository {
         if (film == null)
             throw new IllegalArgumentException("Il film da salvare non può essere null");
 
+        //se l'id è mancante, lo genera
+        final boolean genera = (film.getId()==null || film.getId().isBlank());
+        if (genera){
+            film.setId(UUID.randomUUID().toString());
+            archivio.add(film);
+            salvaSuFile();
+            return;
+        }
+
         //cerco per ID (update)
         int idx = -1;
         for (int i = 0; i < archivio.size(); i++) {
@@ -149,9 +158,16 @@ public class FilmRepositoryConcrete implements FilmRepository {
     public void clearAndSaveAll(List<Film> film) {
         this.archivio.clear(); //svuoto l'archivio corrente
         for (Film f : film){
-            Film nuovo = new Film(f.getId(), f.getTitolo(), f.getRegista(), f.getAnno(), f.getGenere(), f.getRating(), f.getStato());
+            Film nuovo = new Film(f.getId(), 
+                                  f.getTitolo(), 
+                                  f.getRegista(), 
+                                  f.getAnno(), 
+                                  f.getGenere(), 
+                                  f.getRating(), 
+                                  f.getStato());
             archivio.add(nuovo);
         }
+        salvaSuFile();
     }
 
 }

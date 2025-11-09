@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 //Rappresenta una raccolta tematica personalizzata di film.
+
 public class Raccolta {
     private final String id;
     private String nome;

@@ -21,6 +21,9 @@ public class RaccoltaService implements Observer {
     }
 
     public void creaRaccolta(String id, String nome, String descrizione) {
+        if(nome==null || nome.isBlank()){
+            throw new IllegalArgumentException("Il nome della raccolta non può essere vuoto.");
+        }
         if (raccolte.existsByName(nome))
             throw new IllegalStateException("Esiste già una raccolta con questo nome");
         raccolte.save(new Raccolta(id, nome, descrizione));
