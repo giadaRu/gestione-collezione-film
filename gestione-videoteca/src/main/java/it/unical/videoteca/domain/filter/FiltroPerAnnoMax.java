@@ -11,6 +11,6 @@ public class FiltroPerAnnoMax implements FiltroFilm {
 
     @Override
     public boolean applica(Film film) {
-        return film.getAnno() <= annoMax;
+        return film.getAnno() <= annoMax && film.getAnno()!=null;
     }
 }

@@ -11,6 +11,6 @@ public class FiltroPerRatingMax implements FiltroFilm {
 
     @Override
     public boolean applica(Film film) {
-        return film.getRating() <= ratingMax;
+        return film.getRating() <= ratingMax && film.getRating()!=null;
     }
 }

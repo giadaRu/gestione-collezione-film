@@ -11,6 +11,6 @@ public class FiltroPerAnnoMin implements FiltroFilm {
 
     @Override
     public boolean applica(Film film) {
-        return film.getAnno() >= annoMin;
+        return film.getAnno() >= annoMin && film.getAnno()!=null;
     }
 }
